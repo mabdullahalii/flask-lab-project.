@@ -1,24 +1,30 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# Homepage route with navigation buttons
+# Homepage route
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return "Welcome to the Flask app!", 200
 
 # Health check route
 @app.route('/health')
 def health():
-    return render_template('health.html', status="OK", message="Server is healthy")
+    return jsonify(status="healthy"), 200
 
-# Simple POST endpoint (form-based)
-@app.route('/data', methods=['GET', 'POST'])
+# Simple POST endpoint
+@app.route('/data', methods=['POST'])
 def data():
-    if request.method == 'POST':
-        name = request.form.get('name', 'Anonymous')
-        return render_template('data.html', received=name, message="Data received successfully!")
-    return render_template('data.html')
+    # Expect JSON data
+    if not request.is_json:
+        return jsonify(error="Invalid content type. Expected application/json."), 400
+    
+    content = request.get_json()
+    return jsonify(
+        message="Data received successfully",
+        received_data=content
+    ), 200
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
