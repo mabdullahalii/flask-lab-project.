@@ -2,17 +2,14 @@ from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
 
-# Homepage route with navigation buttons
 @app.route('/')
 def home():
     return render_template('index.html')
 
-# Health check route
 @app.route('/health')
 def health():
     return render_template('health.html', status="OK", message="Server is healthy")
 
-# Simple POST endpoint (form-based)
 @app.route('/data', methods=['GET', 'POST'])
 def data():
     if request.method == 'POST':
